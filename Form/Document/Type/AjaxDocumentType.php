@@ -15,6 +15,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Options;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -42,33 +43,34 @@ class AjaxDocumentType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOptions(array $options)
+    public function getDefaultOptions()
     {
-        $defaultOptions = array(
+        $choiceList = function (Options $options) {
+            return new AjaxDocumentChoiceList(
+                $this->registry->getManager($options['document_manager']),
+                $options['class'],
+                $options['property'],
+                $options['query_builder'],
+                $options['choices'],
+                $options['ajax']
+            );
+        };
+
+	$defaultOptions = array(
             'choices'           => array(),
             'class'             => null,
             'document_manager'  => null,
-            'expanded'          => null,
+            'expended'          => null,
             'multiple'          => false,
             'preferred_choices' => array(),
             'property'          => null,
             'query_builder'     => null,
             'template'          => 'choice',
-            'ajax'              => false
+            'ajax'              => false,
+            'choice_list'	=> $choiceList,
         );
 
-        $options = array_replace($defaultOptions, $options);
-
-        $options['choice_list'] = new AjaxDocumentChoiceList(
-            $this->registry->getManager($options['document_manager']),
-            $options['class'],
-            $options['property'],
-            $options['query_builder'],
-            $options['choices'],
-            $options['ajax']
-        );
-
-        return $options;
+        return $defaultOptions;
     }
 
     /**

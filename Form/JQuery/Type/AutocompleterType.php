@@ -15,6 +15,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Options;
 
 use Genemu\Bundle\FormBundle\Form\Core\ChoiceList\AjaxArrayChoiceList;
 use Genemu\Bundle\FormBundle\Form\Core\DataTransformer\ChoiceToJsonTransformer;
@@ -74,28 +75,26 @@ class AutocompleterType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOptions(array $options)
+    public function getDefaultOptions()
     {
+	$ajax = function (Options $options) {
+            return !empty($options['route_name']);
+	};
+		
         $defaultOptions = array(
             'widget' => 'choice',
             'route_name' => null,
-            'ajax' => false,
+            'ajax' => $ajax,
             'freeValues' => false,
         );
 
-        $options = array_replace($defaultOptions, $options);
-
-        if (!empty($options['route_name'])) {
-            $options['ajax'] = true;
-        }
-
-        return $options;
+        return $defaultOptions;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAllowedOptionValues(array $options)
+    public function getAllowedOptionValues()
     {
         return array(
             'widget' => array(

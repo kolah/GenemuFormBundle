@@ -15,9 +15,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
-
+use Symfony\Component\Form\Options;
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Genemu\Bundle\FormBundle\Form\Doctrine\ChoiceList\AjaxEntityChoiceList;
 
 /**
@@ -25,8 +24,8 @@ use Genemu\Bundle\FormBundle\Form\Doctrine\ChoiceList\AjaxEntityChoiceList;
  *
  * @author Olivier Chauvel <olivier@generation-multiple.com>
  */
-class AjaxEntityType extends AbstractType
-{
+class AjaxEntityType extends AbstractType {
+
     private $registry;
 
     /**
@@ -34,54 +33,52 @@ class AjaxEntityType extends AbstractType
      *
      * @param ManagerRegistry $registry
      */
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(ManagerRegistry $registry) {
         $this->registry = $registry;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOptions(array $options)
-    {
+    public function getDefaultOptions() {
+        $choiceList = function (Options $options) {
+            return new AjaxEntityChoiceList(
+                            $this->registry->getManager($options['em']),
+                            $options['class'],
+                            $options['property'],
+                            $options['query_builder'],
+                            $options['choices'],
+                            $options['group_by'],
+                            $options['ajax']
+            );
+        };
+
         $defaultOptions = array(
-            'em'            => null,
-            'class'         => null,
-            'property'      => null,
+            'em' => null,
+            'class' => null,
+            'property' => null,
             'query_builder' => null,
-            'choices'       => null,
-            'group_by'      => null,
-            'ajax'          => false
+            'choices' => null,
+            'group_by' => null,
+            'ajax' => false,
+            'choice_list' => $choiceList,
         );
 
-        $options = array_replace($defaultOptions, $options);
-
-        $options['choice_list'] = new AjaxEntityChoiceList(
-            $this->registry->getManager($options['em']),
-            $options['class'],
-            $options['property'],
-            $options['query_builder'],
-            $options['choices'],
-            $options['group_by'],
-            $options['ajax']
-        );
-
-        return $options;
+        return $defaultOptions;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getParent(array $options)
-    {
+    public function getParent(array $options) {
         return 'entity';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
+    public function getName() {
         return 'genemu_ajaxentity';
     }
+
 }

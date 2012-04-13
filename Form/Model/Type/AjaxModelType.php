@@ -15,6 +15,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Options;
 
 use Genemu\Bundle\FormBundle\Form\Model\ChoiceList\AjaxModelChoiceList;
 
@@ -28,8 +29,21 @@ class AjaxModelType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOptions(array $options)
+    public function getDefaultOptions()
     {
+	$choiceList = function (Options $options) {
+            if (!isset($options['choice_list'])) {
+                return new AjaxModelChoiceList(
+	                $options['class'],
+	                $options['property'],
+	                $options['choices'],
+	                $options['query'],
+	                $options['ajax']
+	        );
+	    }
+            return $options['choice_list'];
+	};
+
         $defaultOptions = array(
             'template' => 'choice',
             'multiple' => false,
@@ -40,21 +54,10 @@ class AjaxModelType extends AbstractType
             'choices' => array(),
             'preferred_choices' => array(),
             'ajax' => false,
+			'choice_list' => $choiceList
         );
 
-        $options = array_replace($defaultOptions, $options);
-
-        if (!isset($options['choice_list'])) {
-            $options['choice_list'] = new AjaxModelChoiceList(
-                $options['class'],
-                $options['property'],
-                $options['choices'],
-                $options['query'],
-                $options['ajax']
-            );
-        }
-
-        return $options;
+        return $defaultOptions;
     }
 
     /**

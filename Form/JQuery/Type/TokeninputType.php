@@ -120,12 +120,16 @@ class TokeninputType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOptions(array $options)
+    public function getDefaultOptions()
     {
+        $ajax = function (Options $options) {
+            return false === empty($options['route_name']);
+        };
+
         $defaultOptions = array(
             'widget' => 'choice',
             'route_name' => null,
-            'ajax' => false,
+            'ajax' => $ajax,
             'queryParam' => 'term',
             'preventDuplicates' => true,
             'tokenValue' => 'value',
@@ -133,19 +137,13 @@ class TokeninputType extends AbstractType
             'theme' => 'facebook'
         );
 
-        if (false === empty($options['route_name'])) {
-            $options['ajax'] = true;
-        }
-
-        $options = array_replace($defaultOptions, $options);
-
-        return $options;
+       	return $defaultOptions;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAllowedOptionValues(array $options)
+    public function getAllowedOptionValues()
     {
         return array(
             'widget' => array(

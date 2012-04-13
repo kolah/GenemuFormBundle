@@ -63,7 +63,7 @@ class GeolocationType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOptions(array $options)
+    public function getDefaultOptions()
     {
         $defaultOptions = array(
             'map' => false,
@@ -85,7 +85,7 @@ class GeolocationType extends AbstractType
             ),
         );
 
-        return array_replace($defaultOptions, $options);
+        return $defaultOptions;
     }
 
     /**

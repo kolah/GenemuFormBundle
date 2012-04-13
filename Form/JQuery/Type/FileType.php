@@ -104,7 +104,7 @@ class FileType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOptions(array $options)
+    public function getDefaultOptions()
     {
         $defaultOptions = array(
             'required' => false,
@@ -112,7 +112,7 @@ class FileType extends AbstractType
             'configs' => array(),
         );
 
-        return array_replace($defaultOptions, $options);
+        return $defaultOptions;
     }
 
     /**

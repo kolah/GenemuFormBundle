@@ -82,7 +82,7 @@ class ImageType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOptions(array $options)
+    public function getDefaultOptions()
     {
         $defaultOptions = array(
             'configs' => array(
@@ -91,7 +91,7 @@ class ImageType extends AbstractType
             )
         );
 
-        return array_replace_recursive($defaultOptions, $options);
+        return $defaultOptions;
     }
 
     /**

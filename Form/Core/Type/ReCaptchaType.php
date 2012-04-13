@@ -77,7 +77,7 @@ class ReCaptchaType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOptions(array $options)
+    public function getDefaultOptions()
     {
         $defaultOptions = array(
             'configs' => array_merge($this->options, array(
@@ -92,7 +92,7 @@ class ReCaptchaType extends AbstractType
             'error_bubbling' => false,
         );
 
-        return array_replace_recursive($defaultOptions, $options);
+        return $defaultOptions;
     }
 
     /**

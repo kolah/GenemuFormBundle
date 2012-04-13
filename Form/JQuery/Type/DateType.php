@@ -15,14 +15,15 @@ use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Options;
 
 /**
  * DateType
  *
  * @author Olivier Chauvel <olivier@generation-multiple.com>
  */
-class DateType extends AbstractType
-{
+class DateType extends AbstractType {
+
     private $options;
 
     /**
@@ -30,29 +31,26 @@ class DateType extends AbstractType
      *
      * @param array $options
      */
-    public function __construct(array $options)
-    {
+    public function __construct(array $options) {
         $this->options = $options;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilder $builder, array $options)
-    {
-        $options = $this->getDefaultOptions($options);
+    public function buildForm(FormBuilder $builder, array $options) {
+        $options = $this->getDefaultOptions();
 
         $builder
-            ->setAttribute('years', $options['years'])
-            ->setAttribute('culture', $options['culture'])
-            ->setAttribute('configs', $options['configs']);
+                ->setAttribute('years', $options['years'])
+                ->setAttribute('culture', $options['culture'])
+                ->setAttribute('configs', $options['configs']);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildView(FormView $view, FormInterface $form)
-    {
+    public function buildView(FormView $view, FormInterface $form) {
         $configs = $form->getAttribute('configs');
         $year = $form->getAttribute('years');
 
@@ -64,47 +62,46 @@ class DateType extends AbstractType
         }
 
         $view
-            ->set('min_year', min($year))
-            ->set('max_year', max($year))
-            ->set('configs', $configs)
-            ->set('culture', $form->getAttribute('culture'));
+                ->set('min_year', min($year))
+                ->set('max_year', max($year))
+                ->set('configs', $configs)
+                ->set('culture', $form->getAttribute('culture'));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOptions(array $options)
-    {
+    public function getDefaultOptions() {
         $defaultOptions = array(
             'culture' => \Locale::getDefault(),
             'widget' => 'choice',
             'configs' => array_merge(array(
                 'dateFormat' => null,
-            ), $this->options),
+                'showOn' => $showOn,
+                    ), $this->options),
         );
 
-        $options = array_replace_recursive($defaultOptions, $options);
+        $showOn = function(Options $options) {
+                    if ('single_text' !== $options['widget'] || isset($options['configs']['buttonImage'])) {
+                        return 'button';
+                    }
+                    return '';
+                };
 
-        if ('single_text' !== $options['widget'] || isset($options['configs']['buttonImage'])) {
-            $options['configs']['showOn'] = 'button';
-        }
-
-        return $options;
+        return $defaultOptions;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getParent(array $options)
-    {
+    public function getParent(array $options) {
         return 'date';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
+    public function getName() {
         return 'genemu_jquerydate';
     }
 
@@ -115,8 +112,7 @@ class DateType extends AbstractType
      *
      * @return string pattern date of Javascript
      */
-    protected function getJavascriptPattern(\IntlDateFormatter $formatter)
-    {
+    protected function getJavascriptPattern(\IntlDateFormatter $formatter) {
         $pattern = $formatter->getPattern();
         $patterns = preg_split('([\\\/.:_;,\s-\ ]{1})', $pattern);
         $exits = array();
@@ -165,4 +161,5 @@ class DateType extends AbstractType
 
         return str_replace(array_keys($exits), array_values($exits), $pattern);
     }
+
 }

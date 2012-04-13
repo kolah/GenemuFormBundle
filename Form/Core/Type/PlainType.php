@@ -18,7 +18,7 @@ class PlainType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOptions(array $options)
+    public function getDefaultOptions()
     {
         $defaultOptions = array(
             'widget'  => 'field',
@@ -30,7 +30,7 @@ class PlainType extends AbstractType
             //'property_path' => false,
         );
 
-        return array_replace_recursive($defaultOptions, $options);
+        return $defaultOptions;
     }
 
     /**
